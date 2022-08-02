@@ -1,0 +1,42 @@
+﻿@model InvalidRFID
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2 style="color:white;">Details</h2>
+
+<div style="color:white;">
+    <h4>InvalidRFID</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.RFID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RFID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Reason)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Reason)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsEnable)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsEnable)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

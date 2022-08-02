@@ -1,0 +1,43 @@
+﻿@model IEnumerable<InvalidRFID>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<p style="color:white;">
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table" style="color:white;">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.RFID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsEnable)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Reason)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.RFID)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.IsEnable)
+    </td>
+    <td>
+        @Html.DisplayFor(modelItem => item.Reason)
+    </td>
+    <td>
+        @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+        @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+    </td>
+</tr>
+}
+
+</table>

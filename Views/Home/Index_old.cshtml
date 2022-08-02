@@ -1,0 +1,197 @@
+﻿@model IEnumerable<Product>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="table">
+
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.facilityCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.thingTypeCode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Timestamp)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.tagID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.itemcode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.supplier)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.productDescrip)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.sGroup)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Department)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StockType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DocumentNum)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.brand)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.serialNUM)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.status)
+                </th>
+            </tr>
+        </thead>
+    </table>
+
+
+</div>
+@section Scripts{
+
+    
+    <script type="text/javascript">
+        $(document).ready(function () {
+            bindDatatable();
+        });
+
+        function bindDatatable() {
+            datatable = $('#myTable')
+                .DataTable({
+                    "sAjaxSource": "/Home/GetData",
+                    "bServerSide": true,
+                    "bProcessing": true,
+                    "bSearchable": true,
+                    "dom": 'Bfrtip',
+                    "buttons": [
+                        'csv', 'excel'
+                    ],
+                    "order": [[3, 'desc']],
+                    "language": {
+                        "emptyTable": "No record found.",
+                        "processing":
+                            '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#2a2b2b;"></i><span class="sr-only">Loading...</span> '
+                    },
+                    "columns": [
+                        {
+                            "data": "id",
+                            "autoWidth": true,
+                            "searchable": true
+                        },
+                        {
+                            "data": "facilityCode",
+                            "autoWidth": true,
+                            "searchable": true
+                        },
+                        {
+                            "data": "thingTypeCode",
+                            "autoWidth": true,
+                            "searchable": true,
+                            "sortable": false
+                        },
+                        {
+                            "data": "timestamp",
+                            "autoWidth": true,
+                            "render": function (mydata) {
+                                var date = new Date(parseInt(mydata.substr(6)));
+                                var month = date.getMonth() + 1;
+				return date.getDate() + "/" + month + "/" + date.getFullYear() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+                            },
+                            "searchable": true
+                        }, {
+                            "data": "tagID",
+                            "autoWidth": true,
+                            "searchable": true,
+                            "sortable": false
+                        }, {
+                            "data": "itemcode",
+                            "autoWidth": true,
+                            "searchable": true,
+                            "sortable": false
+                        },{
+                            "data": "supplier",
+                            "autoWidth": true,
+                            "searchable": true,
+                            "sortable": false
+                        },{
+                            "data": "productDescrip",
+                            "autoWidth": true,
+                            "searchable": true,
+                            "sortable": false
+                        },{
+                            "data": "sGroup",
+                            "autoWidth": true,
+                            "searchable": true,
+                            "sortable": false
+                        },{
+                            "data": "department",
+                            "autoWidth": true,
+                            "searchable": true,
+                            "sortable": false
+                        },{
+                            "data": "stockType",
+                            "autoWidth": true,
+                            "searchable": true,
+                            "sortable": false
+                        },{
+                            "data": "documentNum",
+                            "autoWidth": true,
+                            "searchable": true,
+                            "sortable": false
+                        },{
+                            "data": "brand",
+                            "autoWidth": true,
+                            "searchable": true,
+                            "sortable": false
+                        },{
+                            "data": "serialNUM",
+                            "autoWidth": true,
+                            "searchable": true,
+                            "sortable": false
+                        },
+                        {
+                            "data": "status",
+                            "autoWidth": true,
+                            "searchable": true,
+                            "sortable": false,
+                        },
+                    ],
+                    "rowCallback": function (row, data, index) {
+                        if (data.status != "Sold") {
+                            $('td', row).css('color', 'red');
+                        }
+                    },
+                    //For single column
+                    //columnDefs: [{
+                    //    targets: 14,
+                    //    render: function (data, type, row) {
+                    //        var s = data;
+                    //        if (data.toUpperCase() == "SOLD") {
+                    //            alert(JSON.stringify(row))
+                    //           // $(this).closest('tr').addClass('red');
+                    //            s = '<span style="color:red">' + data + '</span>';
+                    //        }
+                    //        return s;
+                    //    }
+                    //}],
+                });
+        }
+        
+    </script>
+
+}
+

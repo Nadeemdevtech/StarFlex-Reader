@@ -1,0 +1,359 @@
+﻿@model PagedResult<Product>
+@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    Layout = null;
+    var _val = ViewBag.SwitchValue;
+    string loggedUser = @HttpContextAccessor.HttpContext.Session.GetString("UserName");
+}
+
+<style>
+    .dropbtn {
+        cursor: pointer;
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+            .dropdown-content a:hover {
+                background-color: #ddd;
+            }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .dropdown:hover .dropbtn {
+        background-color: #3e8e41;
+    }
+</style>
+<link rel="stylesheet" href="~/assets/css/style.css">
+<link href="~/css/bootstrap.css" rel="stylesheet" />
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img src="~/assets/images/Group 23.png" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse base-font" id="navbarSupportedContent">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                <li class="nav-item top-center-text">
+                    <a class="nav-link text-white" aria-current="page" href="#">
+                        <span class="fw-bold">Exit Gate</span> Report
+                    </a>
+                </li>
+            </ul>
+            <div class="d-flex mt-2">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item pe-2 top-right-text">
+                        <a class="nav-link text-white" href="#">
+                            <span class="fw-bold">User:</span> @loggedUser
+                        </a>
+                    </li>
+                    <li class="nav-item py-1 px-2">
+                        <div class="dropdown">
+                            <a class="dropbtn pe-1 text-white">
+                                <img class="" src="~/assets/images/Icon ionic-md-settings.png" alt="">
+                            </a>
+                            <div class="dropdown-content">
+                                @if (loggedUser == "admin")
+                                {
+                                    @*<a href="/swagger/index.html">Api</a>*@
+                                    <a asp-controller="InvalidRFIDs" asp-action="Index">Invalid RFID</a>
+                                }
+                                <a asp-controller="Home" asp-action="LogOut">LogOut</a>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <a href="#">
+                    <img src="~/assets/images/Group 24.png" alt="">
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <div class="text-white fs-28 my-3">
+                <span class="fw-bold">Facility:</span> @Model.StoreName.ToString()
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <form>
+                <input class="form-control search-form" type="text" id="myInput" placeholder="Search">
+            </form>
+        </div>
+        <div class="col-md-9 py-3 py-md-0">
+            <span class="text-white fs-28 pe-2">NOT Sold</span>
+            <label class="switch">
+                <input type="checkbox" id="togBtn">
+                <span class="toggle round"></span>
+            </label>
+            <span class="text-white fs-28 ps-4 pe-2">Auto Refresh</span>
+
+            <span class="dropdown py-1 pe-3">
+                <select class="dp-toggle px-2" aria-label="Default select example" id="selectList">
+                    <option selected>10</option>
+                    <option value="1">20</option>
+                    <option value="2">30</option>
+                    <option value="3">40</option>
+                </select>
+            </span>
+
+            <label class="switch">
+                <input type="checkbox" id="dropdownMenuTog">
+                <span class="toggle round"></span>
+            </label>
+
+        </div>
+        <div>
+            @using (Html.BeginForm("ExportCSV", "Home", FormMethod.Post))
+            {
+                <button type="submit" class="btn btn-success">
+                    <i class="glyphicon glyphicon glyphicon-download"></i> Download CSV
+                </button>
+            }
+            @*<button type="button" class="btn btn-primary" onclick="tableToCSV()">
+            Download CSV
+        </button>*@
+        </div>
+    </div>
+    <div class="row my-2 p-3">
+        <table class="table table-dark table-bordered custom-table" id="datatable">
+            <thead>
+                <tr>
+                    <th scope="col"> ID</th>
+                    <th scope="col"> Facility Code</th>
+                    <th scope="col">Thing code</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Tag ID</th>
+                    <th scope="col">ItemCode</th>
+                    <th scope="col"> Supplier</th>
+                    <th scope="col">Product Description</th>
+                    <th scope="col"> Group</th>
+                    <th scope="col"> Department</th>
+                    <th scope="col"> Stock Type</th>
+                    <th scope="col"> Document</th>
+                    <th scope="col"> Brand</th>
+                    <th scope="col">Serial NUM</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Exit Gate Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var i = 1;
+                }
+                @foreach (var product in Model.Results)
+                {
+                    var rowNo = (Model.CurrentPage - 1) * Model.PageSize + i;
+                    i++;
+
+                <tr>
+                    <td scope="row">@product.ID</td>
+                    <td>@Html.DisplayTextFor(model => product.facilityCode)</td>
+                    <td>@Html.DisplayTextFor(model => product.thingTypeCode)</td>
+                    <td>@Html.DisplayTextFor(model => product.Timestamp)</td>
+                    @if (product.status.ToLower() == "sold")
+                    {
+                        <td class="text-green">@Html.DisplayTextFor(model => product.tagID)</td>
+                    }
+                    else
+                    {
+                        <td class="text-red">@Html.DisplayTextFor(model => product.tagID)</td>
+                    }
+                    <td>@Html.DisplayTextFor(model => product.itemcode)</td>
+                    <td>@Html.DisplayTextFor(model => product.supplier)</td>
+                    <td>@Html.DisplayTextFor(model => product.productDescrip)</td>
+                    <td>@Html.DisplayTextFor(model => product.sGroup)</td>
+                    <td>@Html.DisplayTextFor(model => product.Department)</td>
+                    <td>@Html.DisplayTextFor(model => product.StockType)</td>
+                    <td>@Html.DisplayTextFor(model => product.DocumentNum)</td>
+                    <td>@Html.DisplayTextFor(model => product.brand)</td>
+                    <td>@Html.DisplayTextFor(model => product.serialNUM)</td>
+                    @if (product.status.ToLower() == "sold")
+                    {
+                        <td class="text-green">@Html.DisplayTextFor(model => product.status)</td>
+                    }
+                    else
+                    {
+                        <td class="text-red">@Html.DisplayTextFor(model => product.status)</td>
+                    }
+                    <td>@Html.DisplayTextFor(model => product.exitgatename)</td>
+                </tr>
+
+
+                }
+
+            </tbody>
+        </table>
+        @(await Component.InvokeAsync<PagerViewComponent>(Model))
+    </div>
+    }
+    <footer>
+        <p class="text-center">
+            Copyright 2020 INNOVENT TECH SOLUTIONS, All rights reserved, Confidential
+        </p>
+    </footer>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/popper.js"></script>
+<script src="~/js/bootstrap.js"></script>
+
+<script type="text/javascript">
+    var switchStatus = false;
+    var isRefresh = false;
+    var selectedValue;
+    $(document).ready(function () {
+        if ('@Model.switchValue' === 'True') {
+            $("#togBtn").prop('checked', true);
+            switchStatus = true;
+        }
+        else {
+            $("#togBtn").prop('checked', false);
+            switchStatus = false;
+        }
+
+        if ('@Model.isRefresh' === 'True') {
+            $("#dropdownMenuTog").prop('checked', true);
+            isRefresh = true;
+        }
+        else {
+            $("#dropdownMenuTog").prop('checked', false);
+            isRefresh = false;
+        }
+
+        if ('@Model.selectedInterval' != '0') {
+            if ($("#dropdownMenuTog").is(':checked')) {
+                isRefresh = true;
+                selectedValue = $('#selectList').find(":selected").val();
+                intervalID = setInterval('refreshPage()', selectedValue * 1000);
+            }
+        }
+
+        $("#dropdownMenuTog,#selectList").on('change', function () {
+            if ($("#dropdownMenuTog").is(':checked')) {
+                isRefresh = true;
+                selectedValue = $('#selectList').find(":selected").val();
+                intervalID = setInterval('refreshPage()', selectedValue * 1000);
+            }
+            else {
+                isRefresh = false;
+                clearInterval(intervalID);
+            }
+        });
+
+        $('#myInput').on('keyup', function () {
+            var searchTerm = $(this).val().toLowerCase();
+
+            $('#datatable tbody tr').each(function () {
+                var lineStr = $(this).text().toLowerCase();
+                if (lineStr.indexOf(searchTerm) === -1) {
+                    $(this).hide();
+                } else {
+                    $(this).show();
+                }
+            });
+        });
+    });
+
+    $("#togBtn").on('change', function () {
+        switchStatus = $(this).is(':checked');
+        window.location.href = "/Home/Index?page=" + 1 + "&selectedInterval=" + selectedValue + "&isNotSold=" + switchStatus + "&isRefresh=" + isRefresh;
+    });
+
+    function refreshPage() {
+        window.location.href = "/Home/Index?page=" + 1 + "&selectedInterval=" + selectedValue + "&isNotSold=" + switchStatus + "&isRefresh=" + isRefresh;
+    }
+
+</script>
+
+<script type="text/javascript">
+    function tableToCSV() {
+
+        // Variable to store the final csv data
+        var csv_data = [];
+
+        // Get each row data
+        var rows = document.getElementsByTagName('tr');
+        for (var i = 0; i < rows.length; i++) {
+
+            // Get each column data
+            var cols = rows[i].querySelectorAll('td,th');
+
+            // Stores each csv row data
+            var csvrow = [];
+            for (var j = 0; j < cols.length; j++) {
+
+                // Get the text data of each cell
+                // of a row and push it to csvrow
+                csvrow.push(cols[j].innerHTML);
+            }
+
+            // Combine each column value with comma
+            csv_data.push(csvrow.join(","));
+        }
+
+        // Combine each row data with new line character
+        csv_data = csv_data.join('\n');
+
+        // Call this function to download csv file
+        downloadCSVFile(csv_data);
+
+    }
+
+    function downloadCSVFile(csv_data) {
+
+        // Create CSV file object and feed
+        // our csv_data into it
+        CSVFile = new Blob([csv_data], {
+            type: "text/csv"
+        });
+
+        // Create to temporary link to initiate
+        // download process
+        var temp_link = document.createElement('a');
+
+        // Download csv file
+        temp_link.download = "ExitGateReport.csv";
+        var url = window.URL.createObjectURL(CSVFile);
+        temp_link.href = url;
+
+        // This link should not be displayed
+        temp_link.style.display = "none";
+        document.body.appendChild(temp_link);
+
+        // Automatically click the link to
+        // trigger download
+        temp_link.click();
+        document.body.removeChild(temp_link);
+    }
+</script>
